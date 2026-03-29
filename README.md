@@ -82,4 +82,4 @@ Design mockups live under [`mockups/`](mockups/):
 
 ## License
 
-TBD.
+[MIT](LICENSE)
