@@ -72,9 +72,17 @@ Design mockups live under [`mockups/`](mockups/):
 - [Window 2 — task list + editable titles](mockups/v1/Window%202.png)  
 - [Browser Notification — Pomodoro break prompt](mockups/v1/Browser%20Notification.png)  
 
-## Development (outline)
+## Development
 
-1. Scaffold with Vite + Vue + CRXJS for Manifest V3.  
+**Setup:** `npm install` — **production build:** `npm run build` — **dev (HMR):** `npm run dev` (use the CRXJS / Vite dev flow for extensions on your machine).
+
+**Load unpacked:** `chrome://extensions` → Developer mode → **Load unpacked** → choose the **`dist`** folder after `npm run build`.
+
+**Break window URL (for `chrome.windows.create`):** `chrome.runtime.getURL('src/break/index.html')` (matches output under `dist/`).
+
+### Outline (remaining work)
+
+1. ~~Scaffold with Vite + Vue + CRXJS for Manifest V3.~~  
 2. Implement popup views (Window 1 / Window 2) and Pinia stores.  
 3. Move ticking, **task time (active task + main-running)**, and “pause main while Pomodoro runs” logic to a **single source of truth** (store + service worker sync).  
 4. Persist timers and main session to `chrome.storage.local`.  

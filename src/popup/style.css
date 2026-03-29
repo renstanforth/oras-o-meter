@@ -1,0 +1,39 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family:
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    sans-serif;
+  background: #fff;
+  color: #111;
+  min-width: 280px;
+}
+
+.popup {
+  padding: 16px;
+}
+
+.header {
+  margin-bottom: 12px;
+}
+
+.logo {
+  display: block;
+  width: 100%;
+  max-width: 200px;
+  height: auto;
+}
+
+.muted {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #666;
+}
