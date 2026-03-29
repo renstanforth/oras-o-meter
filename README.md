@@ -66,11 +66,11 @@ Avoid relying only on `setInterval` in the popup (it throttles when inactive). P
 
 ## Repository assets
 
-Design references (in-repo paths may vary):
+Design mockups live under [`mockups/`](mockups/):
 
-- `Window_1` — main timer + progress ring  
-- `Window_2` — timer list + editable titles  
-- `Browser_Notification` — Pomodoro break prompt  
+- [Window 1 — main timer + progress ring](mockups/v1/Window%201.png)  
+- [Window 2 — task list + editable titles](mockups/v1/Window%202.png)  
+- [Browser Notification — Pomodoro break prompt](mockups/v1/Browser%20Notification.png)  
 
 ## Development (outline)
 
