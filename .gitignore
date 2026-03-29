@@ -3,3 +3,4 @@ backlog.txt
 node_modules
 dist
 *.local
+assets/img/extension-icons

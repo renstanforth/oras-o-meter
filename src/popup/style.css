@@ -16,24 +16,3 @@ body {
   color: #111;
   min-width: 280px;
 }
-
-.popup {
-  padding: 16px;
-}
-
-.header {
-  margin-bottom: 12px;
-}
-
-.logo {
-  display: block;
-  width: 100%;
-  max-width: 200px;
-  height: auto;
-}
-
-.muted {
-  margin: 0;
-  font-size: 0.85rem;
-  color: #666;
-}
