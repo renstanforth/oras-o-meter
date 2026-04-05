@@ -10,8 +10,6 @@ export type BgRequest =
   | { type: 'TASK_REMOVE'; id: string }
   | { type: 'TASK_SET_TITLE'; id: string; title: string }
   | { type: 'TASK_SET_ACTIVE'; id: string | null }
-  /** Open or focus the break popup (manual “Take a break”). */
-  | { type: 'TAKE_BREAK' }
   /** Start the break countdown (Play); pauses main if it was running. */
   | { type: 'BREAK_START_COUNTDOWN' }
   /** End break early: resume main, reset focus interval, close window. */

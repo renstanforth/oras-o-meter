@@ -23,5 +23,16 @@ export default defineManifest({
     service_worker: 'src/background/index.ts',
     type: 'module',
   },
-  permissions: ['storage', 'alarms', 'windows'],
+  permissions: ['storage', 'alarms'],
+  web_accessible_resources: [
+    {
+      resources: [
+        'assets/img/extension-icons/icon-16-dim.png',
+        'assets/img/extension-icons/icon-32-dim.png',
+        'assets/img/extension-icons/icon-48-dim.png',
+        'assets/img/extension-icons/icon-128-dim.png',
+      ],
+      matches: ['<all_urls>'],
+    },
+  ],
 })

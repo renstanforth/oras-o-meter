@@ -26,8 +26,6 @@ export type OrasometerState = {
     breakOfferPending: boolean
     /** Break length when user presses Play (seconds). */
     breakDurationSec: number
-    /** `chrome.windows` id for the break popup; reuse or focus when opening again. */
-    breakWindowId: number | null
     /** If true, resume main to running when the break countdown ends or is skipped. */
     mainPausedForBreak: boolean
   }

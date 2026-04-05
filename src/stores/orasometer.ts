@@ -13,7 +13,7 @@ async function sendBg(msg: BgRequest): Promise<OrasometerState> {
 export const useOrasometerStore = defineStore('orasometer', () => {
   const state = ref<OrasometerState | null>(null)
   const hydrated = ref(false)
-  const view = ref<'main' | 'tasks' | 'settings'>('main')
+  const view = ref<'main' | 'tasks' | 'settings' | 'break'>('main')
   const now = ref(Date.now())
   let clock: ReturnType<typeof setInterval> | undefined
 
@@ -122,8 +122,8 @@ export const useOrasometerStore = defineStore('orasometer', () => {
     state.value = await sendBg({ type: 'TASK_SET_ACTIVE', id })
   }
 
-  async function takeBreak() {
-    state.value = await sendBg({ type: 'TAKE_BREAK' })
+  function takeBreak() {
+    view.value = 'break'
   }
 
   async function breakStartCountdown() {

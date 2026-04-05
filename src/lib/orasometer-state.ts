@@ -21,7 +21,6 @@ export function createInitialState(): OrasometerState {
       breakCountdownEndAt: null,
       breakOfferPending: false,
       breakDurationSec: DEFAULT_BREAK_DURATION_SEC,
-      breakWindowId: null,
       mainPausedForBreak: false,
     },
     tasks: {
@@ -59,7 +58,25 @@ export function clampTargetSec(sec: number): number {
 export function migrateOrasometerState(raw: unknown): OrasometerState | null {
   if (!raw || typeof raw !== 'object') return null
   const v = (raw as { version?: number }).version
-  if (v === 3) return raw as OrasometerState
+  if (v === 3) {
+    const o = raw as Record<string, unknown>
+    const pom = (o.pomodoro as Record<string, unknown>) || {}
+    return {
+      ...o,
+      version: 3,
+      pomodoro: {
+        focusElapsedSec: typeof pom.focusElapsedSec === 'number' ? pom.focusElapsedSec : 0,
+        breakCountdownEndAt:
+          typeof pom.breakCountdownEndAt === 'number' || pom.breakCountdownEndAt === null
+            ? (pom.breakCountdownEndAt as number | null)
+            : null,
+        breakOfferPending: Boolean(pom.breakOfferPending),
+        breakDurationSec:
+          typeof pom.breakDurationSec === 'number' ? pom.breakDurationSec : DEFAULT_BREAK_DURATION_SEC,
+        mainPausedForBreak: Boolean(pom.mainPausedForBreak),
+      },
+    } as OrasometerState
+  }
   if (v === 2) {
     const o = raw as Record<string, unknown>
     const pom = o.pomodoro as { focusElapsedSec: number; breakCountdownEndAt: number | null }
@@ -71,7 +88,6 @@ export function migrateOrasometerState(raw: unknown): OrasometerState | null {
         breakCountdownEndAt: pom.breakCountdownEndAt,
         breakOfferPending: false,
         breakDurationSec: DEFAULT_BREAK_DURATION_SEC,
-        breakWindowId: null,
         mainPausedForBreak: false,
       },
     } as OrasometerState
