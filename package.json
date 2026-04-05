@@ -9,6 +9,8 @@
     "dev": "vite",
     "prebuild": "npm run icons",
     "build": "vue-tsc -p tsconfig.json --noEmit && vite build",
+    "zip": "node scripts/zip-dist.mjs",
+    "release-zip": "npm run build && npm run zip",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -21,6 +23,7 @@
     "@types/chrome": "^0.0.304",
     "@types/node": "^22.13.10",
     "@vitejs/plugin-vue": "^5.2.1",
+    "archiver": "^7.0.1",
     "@vue/tsconfig": "^0.7.0",
     "typescript": "~5.7.3",
     "vite": "^6.2.2",
