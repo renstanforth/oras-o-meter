@@ -1,14 +1,26 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted } from 'vue'
+import { onMounted, onUnmounted, watch } from 'vue'
 import { storeToRefs } from 'pinia'
 import logoUrl from '@assets/img/orasometer_logo.svg'
+import BreakView from '@/popup/components/BreakView.vue'
 import MainTimerView from '@/popup/components/MainTimerView.vue'
 import SettingsView from '@/popup/components/SettingsView.vue'
 import TaskListView from '@/popup/components/TaskListView.vue'
 import { useOrasometerStore } from '@/stores/orasometer'
 
 const store = useOrasometerStore()
-const { view, hydrated } = storeToRefs(store)
+const { view, hydrated, state } = storeToRefs(store)
+
+watch(
+  () => {
+    const s = state.value
+    if (!s) return false
+    return Boolean(s.pomodoro.breakOfferPending || s.pomodoro.breakCountdownEndAt != null)
+  },
+  (showBreak) => {
+    if (showBreak) store.view = 'break'
+  },
+)
 
 let stopStorage: (() => void) | undefined
 
@@ -42,6 +54,7 @@ onUnmounted(() => stopStorage?.())
     <p v-if="!hydrated" class="muted">Loading…</p>
     <MainTimerView v-else-if="view === 'main'" />
     <SettingsView v-else-if="view === 'settings'" />
+    <BreakView v-else-if="view === 'break'" />
     <TaskListView v-else />
   </div>
 </template>

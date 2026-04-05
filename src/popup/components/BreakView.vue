@@ -1,12 +1,11 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
 import { storeToRefs } from 'pinia'
-import logoUrl from '@assets/img/orasometer_logo.svg'
 import { formatHms } from '@/lib/orasometer-state'
 import { useOrasometerStore } from '@/stores/orasometer'
 
 const store = useOrasometerStore()
-const { state, hydrated } = storeToRefs(store)
+const { state } = storeToRefs(store)
 
 const now = ref(Date.now())
 let clock: ReturnType<typeof setInterval> | undefined
@@ -28,32 +27,56 @@ const countdownActive = computed(() => state.value?.pomodoro.breakCountdownEndAt
 
 const offerPending = computed(() => state.value?.pomodoro.breakOfferPending === true)
 
-let stopStorage: (() => void) | undefined
-
-onMounted(async () => {
-  stopStorage = store.startStorageSync()
-  await store.refresh()
+onMounted(() => {
   clock = setInterval(() => {
     now.value = Date.now()
   }, 200)
 })
 
 onUnmounted(() => {
-  stopStorage?.()
   if (clock != null) clearInterval(clock)
 })
+
+/** Service worker ended the break countdown; return to main timer. */
+watch(
+  () => state.value?.pomodoro.breakCountdownEndAt,
+  (end, prev) => {
+    if (typeof prev !== 'number') return
+    if (end != null) return
+    if (state.value?.pomodoro.breakOfferPending) return
+    if (store.view === 'break') store.view = 'main'
+  },
+)
+
+async function skip() {
+  await store.breakSkip()
+  store.view = 'main'
+}
+
+async function dismiss() {
+  await store.breakDismissOffer()
+  store.view = 'main'
+}
 </script>
 
 <template>
-  <main v-if="hydrated && state" class="break">
-    <img class="logo" :src="logoUrl" alt="orasometer" width="232" height="32" />
+  <section v-if="state" class="break">
+    <header class="head">
+      <button type="button" class="back" aria-label="Back to timer" @click="store.view = 'main'">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M15 6l-6 6 6 6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+      </button>
+      <span class="title">Break</span>
+    </header>
+
     <p class="eyebrow">Pomodoro</p>
     <h1 class="headline">Have a break</h1>
 
     <section v-if="countdownActive" class="panel">
       <p class="label">Break ends in</p>
       <p class="time">{{ breakRemainingLabel }}</p>
-      <button type="button" class="secondary" @click="store.breakSkip()">Skip</button>
+      <button type="button" class="secondary" @click="skip()">Skip</button>
     </section>
 
     <section v-else class="panel">
@@ -61,31 +84,45 @@ onUnmounted(() => {
       <p class="time">{{ breakPlannedLabel }}</p>
       <div class="actions">
         <button type="button" class="primary" @click="store.breakStartCountdown()">Play</button>
-        <button v-if="offerPending" type="button" class="secondary" @click="store.breakDismissOffer()">
-          Dismiss
-        </button>
+        <button v-if="offerPending" type="button" class="secondary" @click="dismiss()">Dismiss</button>
       </div>
     </section>
 
-    <p class="hint muted">
-      Play starts the countdown and pauses your main work timer. Skip ends the break early.
-    </p>
-  </main>
-  <p v-else class="loading">Loading…</p>
+    <p class="hint muted">Play pauses the main work timer until the break ends or you skip.</p>
+  </section>
 </template>
 
 <style scoped>
 .break {
-  padding: 20px;
-  max-width: 360px;
-  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 260px;
 }
 
-.logo {
-  display: block;
-  max-width: 200px;
-  height: auto;
-  margin-bottom: 12px;
+.head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.back {
+  border: none;
+  background: none;
+  padding: 4px;
+  cursor: pointer;
+  color: #111;
+  line-height: 0;
+  border-radius: 8px;
+}
+
+.back:hover {
+  background: rgba(0, 0, 0, 0.06);
+}
+
+.title {
+  font-weight: 600;
+  font-size: 1rem;
 }
 
 .eyebrow {
@@ -93,20 +130,20 @@ onUnmounted(() => {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: #888;
-  margin: 0 0 4px;
+  margin: 0;
 }
 
 .headline {
   font-size: 1.35rem;
   font-weight: 700;
-  margin: 0 0 20px;
+  margin: 0;
   color: #111;
 }
 
 .panel {
   background: #f7f7f8;
   border-radius: 16px;
-  padding: 20px;
+  padding: 18px;
   text-align: center;
 }
 
@@ -117,8 +154,8 @@ onUnmounted(() => {
 }
 
 .time {
-  margin: 0 0 16px;
-  font-size: 2rem;
+  margin: 0 0 14px;
+  font-size: 1.85rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   color: #111;
@@ -161,19 +198,12 @@ onUnmounted(() => {
 }
 
 .hint {
-  margin: 16px 0 0;
+  margin: 0;
   font-size: 0.8rem;
   line-height: 1.4;
 }
 
 .muted {
   color: #888;
-}
-
-.loading {
-  padding: 24px;
-  margin: 0;
-  color: #666;
-  font-size: 0.9rem;
 }
 </style>

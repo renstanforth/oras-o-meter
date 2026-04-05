@@ -132,7 +132,7 @@ const adjusting = computed(() => state.value?.main.phase === 'running')
 }
 
 .time {
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.02em;

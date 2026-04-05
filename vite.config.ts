@@ -5,17 +5,15 @@ import { defineConfig } from 'vite'
 import manifest from './manifest.config.ts'
 
 export default defineConfig({
+  base: './',
+  build: {
+    // Service worker uses chrome.action.setIcon paths; inlined base64 is invalid there.
+    assetsInlineLimit: 0,
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),
       '@assets': path.resolve(__dirname, 'assets'),
-    },
-  },
-  build: {
-    rollupOptions: {
-      input: {
-        break: path.resolve(__dirname, 'src/break/index.html'),
-      },
     },
   },
   plugins: [vue(), crx({ manifest })],

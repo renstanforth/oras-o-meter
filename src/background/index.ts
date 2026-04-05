@@ -1,9 +1,4 @@
-import {
-  applySecondTick,
-  ensureTickAlarmIfRunning,
-  handleBreakWindowRemoved,
-  handleOrasometerRequest,
-} from './orasometer'
+import { applySecondTick, ensureTickAlarmIfRunning, handleOrasometerRequest } from './orasometer'
 import type { BgRequest } from '@/types/messages'
 import { TICK_ALARM } from '@/types/orasometer'
 
@@ -29,10 +24,6 @@ chrome.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === TICK_ALARM) {
     void applySecondTick()
   }
-})
-
-chrome.windows.onRemoved.addListener((windowId) => {
-  void handleBreakWindowRemoved(windowId)
 })
 
 void ensureTickAlarmIfRunning()
